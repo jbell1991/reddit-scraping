@@ -12,8 +12,6 @@ def return_bad_words(text):
     and returns text with profanity removed"""
     text = text.split()
     for word in bad_words:
-        # if word in text:
-        #     flagged_list.append(word)
         while word in text:
             # remove the word from text
             text.remove(word)
