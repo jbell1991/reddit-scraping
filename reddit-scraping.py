@@ -62,8 +62,7 @@ def clean_submission(text):
     text = ' '.join(
         re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t'])|(\w+:\/\/\S+)", " ", text).split())
     return text
-
-print(df.columns)
+    
 
 # applying clean submission function to the title and body columns
 df['title'] = df['title'].apply(lambda x: clean_submission(x))
