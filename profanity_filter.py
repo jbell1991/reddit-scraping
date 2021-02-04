@@ -7,7 +7,7 @@ df = pd.read_csv('bad_single.csv', usecols=[0], names=None)
 bad_words = df['Bad_words'].to_list()
 
 
-def return_bad_words(text):
+def remove_bad_words(text):
     """Takes in plain text without punctuation, separated by spaces
     and returns text with profanity removed"""
     text = text.split()
@@ -16,6 +16,3 @@ def return_bad_words(text):
             # remove the word from text
             text.remove(word)
     return " ".join(text)
-
-def remove_bad_words():
-    pass
