@@ -78,11 +78,11 @@ title_text = " ".join(title for title in df.title) + body_text
 stopwords = set(STOPWORDS)
 stopwords.add("I'm, It's, s, m")
 
-mask = np.array(Image.open("wallstreetbets.jpg"))
+mask = np.array(Image.open("wallstreetbets3.png"))
 print(mask)
 
 wc = WordCloud(background_color="white", max_words=2000, mask=mask,
-               stopwords=stopwords, max_font_size=40, random_state=42)
+               stopwords=stopwords, max_font_size=20, random_state=42)
 
 # generate word cloud
 wc.generate(title_text)
@@ -101,5 +101,4 @@ axes[2].imshow(mask, cmap = plt.cm.gray,
 interpolation = "bilinear")
 for ax in axes:
     ax.set_axis_off()
-plt.figure(figsize=[10,10])
 plt.show()
