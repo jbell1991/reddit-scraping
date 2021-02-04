@@ -16,3 +16,6 @@ def return_bad_words(text):
             # remove the word from text
             text.remove(word)
     return " ".join(text)
+
+def remove_bad_words():
+    pass
