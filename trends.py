@@ -100,7 +100,7 @@ def job():
     title_freq.to_sql('title_freq', engine, if_exists='append')
 
 # automate script to run at the same time everyday
-schedule.every().day.at("10:30").do(job)
+schedule.every().day.at("09:30").do(job)
 
 
 while True:
