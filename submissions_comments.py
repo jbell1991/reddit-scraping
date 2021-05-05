@@ -95,7 +95,7 @@ def job():
 
 
 # automate script to run at the same time everyday
-schedule.every().day.at("09:38").do(job)
+schedule.every().day.at("09:30").do(job)
 
 
 while True:
