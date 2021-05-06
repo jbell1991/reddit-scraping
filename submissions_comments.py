@@ -1,26 +1,17 @@
 # imports
-from collections import Counter
-from datetime import datetime
 from decouple import config
-from nltk.corpus import stopwords
-import numpy as np
-from os import path
 import pandas as pd
 import praw
-from profanity_filter import remove_bad_words
-from PIL import Image
 import psycopg2
-import re
 import schedule
 from sqlalchemy import create_engine
 import time
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-
-import matplotlib.pyplot as plt
 
 
 def job():
-    print("Performing job")
+    current_day = time.strftime("%m/%d/%Y")
+    print(f"Performing job on {current_day}")
+
     # connecting to reddit API
     reddit = praw.Reddit(
         client_id=config("CLIENT_ID"),
@@ -34,17 +25,20 @@ def job():
 
     hot_wsb = subreddit.hot(limit=1000)
 
-    # storing submission data in a pandas dataframe
-    submissions = {"title": [],
-            "subreddit": [],
-            "author": [],
-            "score": [],
-            "id": [],
-            "url": [],
-            "num_comments": [],
-            "created": [],
-            "body": []}
+    # storing submission data in a dictionary
+    submissions = {
+        "title": [],
+        "subreddit": [],
+        "author": [],
+        "score": [],
+        "id": [],
+        "url": [],
+        "num_comments": [],
+        "created": [],
+        "body": []
+    }
 
+    # iterate over each submission and store data in the submissions dictionary 
     for submission in hot_wsb:
         submissions["title"].append(submission.title)
         submissions["subreddit"].append(submission.subreddit)
@@ -56,9 +50,10 @@ def job():
         submissions["created"].append(submission.created)
         submissions["body"].append(submission.selftext)
 
+    # transform the submissions dictionary into a pandas dataframe
     df = pd.DataFrame(submissions)
 
-    # convert created to date
+    # convert created to date 
     df['created'] = pd.to_datetime(df['created'], unit='s')
 
     # convert subreddit column to string
@@ -72,25 +67,35 @@ def job():
     engine = create_engine(
         f'postgresql://postgres:{db_pass}@localhost:5432/postgres')
 
+    # store pandas dataframe in sql database
     df.to_sql('submissions', engine, if_exists='append')
-    
-    # scrape comments and store them in comments_df
-    comments = {"submission_id": [],
-                "comment_id": [],
-                "comment": []}
 
+    # create dictionary to store comments
+    comments = {
+        "submission_id": [],
+        "comment_id": [],
+        "score": [],
+        "author": [],
+        "created": [],
+        "comment": []
+    }
 
+    # iterating over each submission and collecting relevent comment data
     for id in df['id']:
         submission = reddit.submission(id=id)
         submission.comments.replace_more(limit=None)
         for comment in submission.comments.list():
             comments["submission_id"].append(id)
             comments["comment_id"].append(comment.id)
+            comments["score"].append(comment.score)
+            comments["author"].append(comment.author)
+            comments["created"].append(comment.created)
             comments["comment"].append(comment.body)
 
+    # converting comments dictionary to a pandas dataframe
     comments_df = pd.DataFrame(comments)
 
-    # store comments_df in sql table 
+    # store comments_df in sql table
     comments_df.to_sql('comments', engine, if_exists='append', index=False)
 
 
