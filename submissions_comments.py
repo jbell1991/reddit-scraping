@@ -24,7 +24,7 @@ def job():
 
     subreddit = reddit.subreddit("wallstreetbets")
 
-    hot_wsb = subreddit.hot(limit=1000)
+    hot_wsb = subreddit.hot(limit=150)
 
     # storing submission data in a dictionary
     submissions = {
@@ -96,6 +96,12 @@ def job():
     # converting comments dictionary to a pandas dataframe
     comments_df = pd.DataFrame(comments)
 
+    # convert created to date
+    comments_df["comment_created"] = pd.to_datetime(comments_df["comment_created"], unit='s')
+
+    # convert author to string
+    comments_df["comment_author"] = comments_df["comment_author"].astype(str)
+
     # store comments_df in sql table
     comments_df.to_sql('comments', engine, if_exists='append', index=False)
 
@@ -104,7 +110,7 @@ def job():
     print('Execution time in minutes: ' + str(executionTime/60))
 
 # automate script to run at the same time everyday
-schedule.every().day.at("15:49").do(job)
+schedule.every().day.at("11:30").do(job)
 
 
 while True:
