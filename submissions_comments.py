@@ -110,7 +110,7 @@ def job():
     print('Execution time in minutes: ' + str(executionTime/60))
 
 # automate script to run at the same time everyday
-schedule.every().day.at("09:30").do(job)
+schedule.every().day.at("09:07").do(job)
 
 
 while True:
